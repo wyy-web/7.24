@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打字游戏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            height: 100%;
+            width: 100%;
+            background: url('imgs/1.jpg');
+            background-size: cover;
+            position: relative;
+        }
+
+        .starting{
+            display: block;
+            width: 80px;
+            height: 80px;
+            top:200px;
+            right: 100px;
+            position: absolute;
+        }
+
+        .setting {
+            width: 80px;
+            height: 80px;
+            position: absolute;
+            top:350px;
+            right: 100px;
+            display: block;
+            z-index: 5;
+        }
+
+        .mask {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 600px;
+            background-color: rgba(0, 0, 0, .4);
+        }
+        .setbox{
+            height: 300px;
+            width: 300px;
+            background-color: rgb(152, 211, 251);
+            margin: 0 auto;
+            margin-top: 100px;
+            z-index: 999;
+        }
+        .setbox form{
+            display: inline-block;
+        }
+    </style>
+
+</head>
+
+<body>
+    <img src="imgs/start.jpg" alt="" class="starting">
+    <img src="imgs/setting.jpg" alt="" class="setting">
+    <div class="mask">
+        <div class="setbox">
+            <span>困难度：</span>
+            <form action="#">
+                <input type="radio" name="difficulty" value="one" checked>简单
+                <input type="radio" name="difficulty" value="two">一般
+                <input type="radio" name="difficulty" value="three">困难
+            </form>
+        </div>
+
+    </div>
+
+
+    <script>
+
+var letters=[];
+        for(var i=0;i<26;i++){
+            letters.push(String.fromCharCode(65+i));//输出A-Z 26个大写字母
+        }
+
+        //存放字母
+        var divs = [];
+        //获取元素的初始top，存放字母的初始高度
+        var startTop = [];
+
+        function create(num) {
+            var current = [];
+            for (var i = 0; i < num; i++) {
+                current.push(letters[Math.floor(letters.length * Math.random())]);
+            }
+
+            // console.log(current);
+
+            for (var i = 0; i < current.length; i++) {
+                var div = document.createElement("div");
+                div.innerHTML = current[i];
+                div.style.cssText = `position:absolute;left:${(document.documentElement.clientWidth - 100) * Math.random()}px;top:${40 * Math.random()}px;font-size:${50 + 10 * Math.random()}px;`;
+                document.body.appendChild(div);
+
+                divs.push(div);
+            }
+            for (var i = 0; i < divs.length; i++) {
+                // console.log(divs[i].offsetTop);
+                var topval = divs[i].offsetTop;
+                startTop.push(topval);
+            }
+        }
+
+        //给开始按钮添加点击事件
+        var startBtn = document.querySelector('.starting');
+        startBtn.onclick = function () {
+            create(3);
+            startBtn.style.display = "none";
+        }
+
+        //获取遮罩层
+        var mask = document.querySelector(".mask");
+
+        //给设置按钮添加事件
+        var setting = document.querySelector(".setting");
+        var num = 0;
+        setting.onclick = function () {
+            num++;
+            if (num % 2 == 0) {
+                mask.style.display = "none";
+            } else {
+                mask.style.display = "block";
+            }
+        }
+
+
+
+
+        //获取浏览器高度
+        var high = document.documentElement.clientHeight;
+
+
+        var speed = 5;
+        setInterval(function () {
+            for (var i = 0; i < divs.length; i++) {
+                if (divs[i].offsetTop > high - startTop[i]) {
+                    divs[i].style.top = 0;
+                } else {
+                    divs[i].style.top = divs[i].offsetTop + speed + "px";
+                }
+            }
+        }, 50)
+
+        document.onkeydown = function (ev) {
+            var letter = String.fromCharCode(ev.keyCode);
+            for (var i = 0; i < divs.length; i++) {
+                if (divs[i].innerHTML == letter) {
+                    document.body.removeChild(divs[i]);
+                    divs.splice(i, 1);
+                    create(1);
+
+                    break;
+                }
+            }
+        }
+
+
+
+
+    </script>
+</body>
+
+<ml>
